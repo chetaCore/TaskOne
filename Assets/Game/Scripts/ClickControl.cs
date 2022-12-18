@@ -2,26 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class ClickControl : MonoBehaviour
 {   
     [Range(1, 10)]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float _moveSpeed;
     [SerializeField] private Camera _camera;
-    
-    
-    private JoystickControl joystickControl;
-    private Rigidbody characterRigidbody;
+     
+    private JoystickControl _joystickControl;
+    private Rigidbody _characterRigidbody;
 
-    private Ray ray;
-    RaycastHit raycastHit;
+    private Ray _ray;
+    private RaycastHit _raycastHit;
 
-
-    private bool isClicked = false;
+    private bool _isClicked = false;
 
     private void Awake()
     {
-        characterRigidbody = GetComponent<Rigidbody>();
-        joystickControl = GetComponent<JoystickControl>();
+        _characterRigidbody = GetComponent<Rigidbody>();
+        _joystickControl = GetComponent<JoystickControl>();
     }
 
     private void Update()
@@ -34,37 +33,35 @@ public class ClickControl : MonoBehaviour
 
     private void Movement()
     {
-        if (joystickControl.isActive)
+        if (_joystickControl.isActive)
             return;
 
+        _ray = _camera.ScreenPointToRay(Input.GetTouch(Input.touchCount - 1).position);
 
-        ray = _camera.ScreenPointToRay(Input.GetTouch(Input.touchCount - 1).position);
-
-        if (Physics.Raycast(ray, out RaycastHit raycastHit))
+        if (Physics.Raycast(_ray, out RaycastHit raycastHit))
         {
-            this.raycastHit = raycastHit;
+            this._raycastHit = raycastHit;
   
-            if (!isClicked)
+            if (!_isClicked)
                 StartCoroutine(MovementCor());
         }
-        
-        
+
     }
 
     IEnumerator MovementCor()
     {
-        isClicked = true;
+        _isClicked = true;
 
-        while (Mathf.Round(transform.position.x) != Mathf.Round(raycastHit.point.x))
+        while (Mathf.Round(transform.position.x) != Mathf.Round(_raycastHit.point.x))
         {
-            if (joystickControl.isActive)
+            if (_joystickControl.isActive)
                 break;
 
-            characterRigidbody.velocity = Vector2.MoveTowards(characterRigidbody.velocity, new Vector2(raycastHit.point.x, characterRigidbody.velocity.y), moveSpeed);
+            _characterRigidbody.velocity = Vector3.MoveTowards(_characterRigidbody.velocity, new Vector3(_raycastHit.point.x, _characterRigidbody.velocity.y, _raycastHit.point.z), _moveSpeed);
             yield return new WaitForSeconds(0.1f);  
             
         }
 
-        isClicked = false;
+        _isClicked = false;
     }
 }

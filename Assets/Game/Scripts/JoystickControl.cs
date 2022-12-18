@@ -5,38 +5,31 @@ using UnityEngine.Events;
 
 public class JoystickControl : MonoBehaviour
 {
-    [SerializeField] private FixedJoystick joystick;
-    [Range(1,10)]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private FixedJoystick _joystick;
+    [Range(1, 10)]
+    [SerializeField] private float _moveSpeed;
 
-    private Rigidbody characterRigidbody;
-    public bool isActive;
+    private Rigidbody _characterRigidbody;
+    [HideInInspector] public bool isActive;
 
 
     private void Awake()
     {
-        characterRigidbody = GetComponent<Rigidbody>();
+        _characterRigidbody = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
     {
-        if (joystick.Vertical != 0 || joystick.Horizontal != 0)
+        if (_joystick.Vertical != 0 || _joystick.Horizontal != 0)
         {
             isActive = true;
-            Movement();
-            
+            Movement();            
         }else
             isActive = false;
-
-
     }
 
     private void Movement()
     {
-        //Движение по оси Z
-        characterRigidbody.velocity = new Vector3(joystick.Horizontal * moveSpeed, characterRigidbody.velocity.y, characterRigidbody.velocity.z);
-
-        //Движение по оси ZX
-        // characterRigidbody.velocity = new Vector3(joystick.Vertical * moveSpeed, characterRigidbody.velocity.y, joystick.Horizontal * moveSpeed);
+        _characterRigidbody.velocity = new Vector3(_joystick.Horizontal * _moveSpeed, _characterRigidbody.velocity.y, _joystick.Vertical * _moveSpeed);
     }
 }
